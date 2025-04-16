@@ -22,10 +22,10 @@ int main() {
     }
 
     //regex will only matxh single declared variables
-    regex declRegex(R"(\b(int|float|double|char)\s+([a-zA-Z_]\w*)\s*(=\s*[^;]+)?\s*;)");
-    unordered_map<string, int> lastOccurrence;
-    vector<string> variables;
-
+    // regex declRegex(R"(\b(int|float|double|char)\s+([a-zA-Z_]\w*)\s*(=\s*[^;]+)?\s*;)");
+    // unordered_map<string, int> lastOccurrence;
+    // vector<string> variables;
+    
     //it will find al the declarations
     for (int i = 0; i < lines.size(); ++i) {
         smatch match;
@@ -49,10 +49,10 @@ int main() {
 
     // Write output as a clean table
     ofstream outFile("output.txt");
-    outFile<<"Variable\t\tLast Occurrence\n";
+    // outFile<<"Variable\t\tLast Occurrence\n";
     // outFile<<"--------\t\t----------------\n";
     for (const auto& entry : lastOccurrence) {
-        outFile << entry.first << "\t\t" << entry.second << "\n";
+        outFile << entry.first << ":" << entry.second << "\n";
     }
 
     cout << "Output written to output.txt\n";
