@@ -25,26 +25,17 @@ int main() {
     // regex declRegex(R"(\b(int|float|double|char)\s+([a-zA-Z_]\w*)\s*(=\s*[^;]+)?\s*;)");
     // unordered_map<string, int> lastOccurrence;
     // vector<string> variables;
-    
-    //it will find al the declarations
+    regex allocRegex(R"(\b([a-zA-Z_]\w*)\s*=\s*(?:\(\s*\w+\s*\*\s*\)\s*)?(malloc|calloc|realloc)\s*\(.*\)\s*;)");
+    unordered_map<string, int> lastOccurrence;
+
     for (int i = 0; i < lines.size(); ++i) {
         smatch match;
         string currentLine = lines[i];
-        if (regex_search(currentLine, match, declRegex)) {
-            string varName = match[2];
-            variables.push_back(varName);
-            lastOccurrence[varName] = i + 1; //store declaration line as default last use
+        if (regex_search(currentLine, match, allocRegex)) {
+            string varName = match[1];
+            lastOccurrence[varName] = i + 1; // line numbers are 1-based
         }
-    }
-
-    // Second pass: Find actual last usage
-    for (const string& var : variables) {
-        regex usageRegex("\\b" + var + "\\b");
-        for (int i = 0; i < lines.size(); ++i) {
-            if (regex_search(lines[i], usageRegex)) {
-                lastOccurrence[var] = i + 1;
-            }
-        }
+    
     }
 
     // Write output as a clean table
