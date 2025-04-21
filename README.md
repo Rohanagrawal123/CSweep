@@ -1,6 +1,3 @@
-================================================
-FILE: README.md
-================================================
 # CSweep  
 *A garbage collector for C, using principles of compiler design*  
 Because memory leaks are just clingy pointers.
@@ -37,6 +34,7 @@ In short:
 
 ## Project Structure
 
+'''bash
 Directory structure:
 └── sujal-maheshwari2004-csweep/
     ├── README.md
