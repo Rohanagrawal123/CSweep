@@ -13,7 +13,7 @@ string removeComments(const string& line) {
     size_t pos = cleaned.find("//");
     if (pos != string::npos)
         cleaned = cleaned.substr(0, pos);
-    regex inlineBlockComment(R"(/\*.*?\*/)");
+    regex inlineBlockComment(R"(/\.?\*/)");
     cleaned = regex_replace(cleaned, inlineBlockComment, "");
     return cleaned;
 }
@@ -40,7 +40,7 @@ int main() {
     }
 
     // Match pointer assignment using malloc/calloc/realloc
-    regex dmaRegex(R"((int|float|double|char)\s*\*\s*([a-zA-Z_]\w*)\s*=\s*\([^)]+\)\s*(malloc|calloc|realloc)\s*\()");
+    regex dmaRegex(R"((int|float|double|char)\s*\\s([a-zA-Z_]\w*)\s*=\s*\([^)]+\)\s*(malloc|calloc|realloc)\s*\()");
 
     unordered_map<string, int> lastOccurrence;
     vector<string> dmaVars;
@@ -84,10 +84,11 @@ int main() {
     // Sort and output
     vector<pair<string, int>> sorted(lastOccurrence.begin(), lastOccurrence.end());
     sort(sorted.begin(), sorted.end());
-    // Write output in "varName : lineNumber" format
+
     ofstream outFile("output.txt");
+    outFile << "DMA Variable\t\tLast Occurrence\n";
     for (const auto& entry : sorted) {
-        outFile << entry.first << " : " << entry.second << "\n";
+        outFile << entry.first << "\t\t" << entry.second << "\n";
     }
 
     cout << "Output written to output.txt\n";
