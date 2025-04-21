@@ -1,3 +1,6 @@
+================================================
+FILE: README.md
+================================================
 # CSweep  
 *A garbage collector for C, using principles of compiler design*  
 Because memory leaks are just clingy pointers.
@@ -31,3 +34,17 @@ In short:
 1. Parses your C code like a boss.
 2. Detects allocations and references like a memory detective.
 3. Inserts collection logic so your heap doesn’t become a haunted house.
+
+## Project Structure
+
+Directory structure:
+└── sujal-maheshwari2004-csweep/
+    ├── README.md
+    ├── augument.py
+    ├── parser.cpp
+    └── testData/
+        ├── README.md
+        ├── parse.txt
+        ├── sweepedtest.c
+        ├── test.c
+        └── test_2.C
