@@ -4,7 +4,27 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <algorithm>
+
 using namespace std;
+
+string removeComments(const string& line) {
+    string cleaned = line;
+    size_t pos = cleaned.find("//");
+    if (pos != string::npos)
+        cleaned = cleaned.substr(0, pos);
+    regex inlineBlockComment(R"(/\*.*?\*/)");
+    cleaned = regex_replace(cleaned, inlineBlockComment, "");
+    return cleaned;
+}
+
+string trim(const string& str) {
+    const string whitespace = " \t\n\r";
+    size_t start = str.find_first_not_of(whitespace);
+    if (start == string::npos) return "";
+    size_t end = str.find_last_not_of(whitespace);
+    return str.substr(start, end - start + 1);
+}
 
 int main() {
     ifstream file("test_2.c");
@@ -15,35 +35,60 @@ int main() {
 
     vector<string> lines;
     string line;
-
-    //read the entire file into a vector of lines
     while (getline(file, line)) {
-        lines.push_back(line);
+        lines.push_back(removeComments(line));
     }
 
-    //regex will only matxh single declared variables
-    // regex declRegex(R"(\b(int|float|double|char)\s+([a-zA-Z_]\w*)\s*(=\s*[^;]+)?\s*;)");
-    // unordered_map<string, int> lastOccurrence;
-    // vector<string> variables;
-    regex allocRegex(R"(\b([a-zA-Z_]\w*)\s*=\s*(?:\(\s*\w+\s*\*\s*\)\s*)?(malloc|calloc|realloc)\s*\(.*\)\s*;)");
+    // Match pointer assignment using malloc/calloc/realloc
+    regex dmaRegex(R"((int|float|double|char)\s*\*\s*([a-zA-Z_]\w*)\s*=\s*\([^)]+\)\s*(malloc|calloc|realloc)\s*\()");
+
     unordered_map<string, int> lastOccurrence;
+    vector<string> dmaVars;
 
     for (int i = 0; i < lines.size(); ++i) {
         smatch match;
-        string currentLine = lines[i];
-        if (regex_search(currentLine, match, allocRegex)) {
-            string varName = match[1];
-            lastOccurrence[varName] = i + 1; // line numbers are 1-based
+        string currentLine = trim(lines[i]);
+
+        if (regex_search(currentLine, match, dmaRegex)) {
+            string varName = match[2];
+            dmaVars.push_back(varName);
+            lastOccurrence[varName] = i + 1;
         }
-    
     }
 
-    // Write output as a clean table
+    // Also capture variables that are declared earlier but assigned later
+    regex pointerAssignRegex(R"(\b([a-zA-Z_]\w*)\s*=\s*\([^)]+\)\s*(malloc|calloc|realloc)\s*\()");
+
+    for (int i = 0; i < lines.size(); ++i) {
+        smatch match;
+        string currentLine = trim(lines[i]);
+        if (regex_search(currentLine, match, pointerAssignRegex)) {
+            string varName = match[1];
+            if (lastOccurrence.find(varName) == lastOccurrence.end()) {
+                dmaVars.push_back(varName);
+            }
+            lastOccurrence[varName] = i + 1;
+        }
+    }
+
+    // Track last usage
+    for (const string& var : dmaVars) {
+        regex usageRegex("\\b" + var + "\\b");
+        for (int i = 0; i < lines.size(); ++i) {
+            if (regex_search(lines[i], usageRegex)) {
+                lastOccurrence[var] = i + 1;
+            }
+        }
+    }
+
+    // Sort and output
+    vector<pair<string, int>> sorted(lastOccurrence.begin(), lastOccurrence.end());
+    sort(sorted.begin(), sorted.end());
+
     ofstream outFile("output.txt");
-    // outFile<<"Variable\t\tLast Occurrence\n";
-    // outFile<<"--------\t\t----------------\n";
-    for (const auto& entry : lastOccurrence) {
-        outFile << entry.first << ":" << entry.second << "\n";
+    outFile << "DMA Variable\t\tLast Occurrence\n";
+    for (const auto& entry : sorted) {
+        outFile << entry.first << "\t\t" << entry.second << "\n";
     }
 
     cout << "Output written to output.txt\n";
