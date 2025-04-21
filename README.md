@@ -32,17 +32,18 @@ In short:
 2. Detects allocations and references like a memory detective.
 3. Inserts collection logic so your heap doesn’t become a haunted house.
 
-## Project Structure
+## 🗂️ Project Structure
 
-'''bash
-Directory structure:
-└── sujal-maheshwari2004-csweep/
-    ├── README.md
-    ├── augument.py
-    ├── parser.cpp
-    └── testData/
-        ├── README.md
-        ├── parse.txt
-        ├── sweepedtest.c
-        ├── test.c
-        └── test_2.C
+```bash
+sujal-maheshwari2004-csweep/
+│
+├── README.md             # Project overview and instructions
+├── augument.py           # Python script (helper for data handling or preprocessing)
+├── parser.cpp            # Main C++ file that parses and injects delete statements
+│
+└── testData/             # Test files and examples
+    ├── README.md         # Notes on test cases
+    ├── parse.txt         # Output of variable parsing
+    ├── sweepedtest.c     # Output file with delete statements inserted
+    ├── test.c            # Original input file for testing
+    └── test_2.C          # Another test input file
