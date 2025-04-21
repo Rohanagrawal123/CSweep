@@ -38,7 +38,7 @@ def process_mapping_and_code(mapping, line_mapping):
     updated_lines = {}
     for key, value in mapping.items():
         if value in line_mapping:
-            updated_lines[value] = f"{line_mapping[value]} free(&{key});"
+            updated_lines[value] = f"{line_mapping[value]} free({key});"
         else:
             updated_lines[value] = line_mapping.get(value, "")
     return updated_lines
