@@ -84,11 +84,10 @@ int main() {
     // Sort and output
     vector<pair<string, int>> sorted(lastOccurrence.begin(), lastOccurrence.end());
     sort(sorted.begin(), sorted.end());
-
+    // Write output in "varName : lineNumber" format
     ofstream outFile("output.txt");
-    outFile << "DMA Variable\t\tLast Occurrence\n";
     for (const auto& entry : sorted) {
-        outFile << entry.first << "\t\t" << entry.second << "\n";
+        outFile << entry.first << " : " << entry.second << "\n";
     }
 
     cout << "Output written to output.txt\n";
