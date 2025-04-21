@@ -73,7 +73,7 @@ def write_updated_code_to_file(updated_lines, original_file_path):
 
 def main():
     # Parse the mapping file
-    mapping = parse_mapping_file("testData/parse.txt")
+    mapping = parse_mapping_file("output.txt")
 
     # Read and process the source code file
     source_file_path = "testData/test.c"
