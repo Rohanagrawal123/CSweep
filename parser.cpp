@@ -39,8 +39,8 @@ int main() {
         lines.push_back(removeComments(line));
     }
 
-    // Match pointer assignment using malloc/calloc/realloc
-    regex dmaRegex(R"((int|float|double|char)\s*\\s([a-zA-Z_]\w*)\s*=\s*\([^)]+\)\s*(malloc|calloc|realloc)\s*\()");
+     // Match pointer assignment using malloc/calloc/realloc, including cases inside loops
+    regex dmaRegex(R"((int|float|double|char)\s*\b([a-zA-Z_]\w*)\b\s*=\s*\([^)]+\)\s*(malloc|calloc|realloc)\s*\()");
 
     unordered_map<string, int> lastOccurrence;
     vector<string> dmaVars;
@@ -49,7 +49,23 @@ int main() {
         smatch match;
         string currentLine = trim(lines[i]);
 
+        
+         // Check if the line is inside a loop
+        if (currentLine.find("for") != string::npos || currentLine.find("while") != string::npos) {
+            // Handle loop-specific logic
+
         if (regex_search(currentLine, match, dmaRegex)) {
+            string varName = match[2];
+                dmaVars.push_back(varName);
+                lastOccurrence[varName] = i + 1;
+            }
+        } else if (regex_search(currentLine, match, dmaRegex)) {
+             if (regex_search(currentLine, match, dmaRegex)) {
+                string varName = match[2];
+                dmaVars.push_back(varName);
+                lastOccurrence[varName] = i + 1;
+            }
+        } else if (regex_search(currentLine, match, dmaRegex)) {
             string varName = match[2];
             dmaVars.push_back(varName);
             lastOccurrence[varName] = i + 1;
