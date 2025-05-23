@@ -109,6 +109,30 @@ int main() {
     for (const auto& entry : sorted) {
         outFile << entry.first << " : " << entry.second << "\n";
     }
+     // Track reassigned variables without free
+    unordered_map<string, bool> isFreed; // Tracks if a variable has been freed
+
+    for (int i = 0; i < lines.size(); ++i) {
+        smatch match;
+        string currentLine = trim(lines[i]);
+
+        // Check for malloc/calloc/realloc assignments
+        if (regex_search(currentLine, match, pointerAssignRegex)) {
+            string varName = match[1];
+            if (isFreed.find(varName) != isFreed.end() && !isFreed[varName]) {
+                // Variable was reassigned without being freed
+                cout << "Warning: Variable '" << varName << "' reassigned without being freed at line " << i + 1 << "\n";
+            }
+            isFreed[varName] = false; // Mark as not freed
+        }
+
+        // Check for free calls
+        regex freeRegex(R"(free\s*\(\s*([a-zA-Z_]\w*)\s*\))");
+        if (regex_search(currentLine, match, freeRegex)) {
+            string varName = match[1];
+            isFreed[varName] = true; // Mark as freed
+        }
+    }
 
     cout << "Output written to output.txt\n";
     return 0;
