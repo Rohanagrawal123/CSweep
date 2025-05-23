@@ -78,7 +78,11 @@ int main() {
     for (int i = 0; i < lines.size(); ++i) {
         smatch match;
         string currentLine = trim(lines[i]);
+        // Check if the line is inside a loop
+        if (currentLine.find("for") != string::npos || currentLine.find("while") != string::npos) {
+            // Handle loop-specific logic
         if (regex_search(currentLine, match, pointerAssignRegex)) {
+            
             string varName = match[1];
             if (lastOccurrence.find(varName) == lastOccurrence.end()) {
                 dmaVars.push_back(varName);
