@@ -27,7 +27,7 @@ string trim(const string& str) {
 }
 
 int main() {
-    ifstream file("test_2.c");
+    ifstream file("testData/test_2.c");
     if (!file.is_open()) {
         cerr << "Failed to open test_2.c\n";
         return 1;
@@ -86,9 +86,9 @@ int main() {
     sort(sorted.begin(), sorted.end());
 
     ofstream outFile("output.txt");
-    outFile << "DMA Variable\t\tLast Occurrence\n";
+    //outFile << "DMA Variable\t\tLast Occurrence\n";
     for (const auto& entry : sorted) {
-        outFile << entry.first << "\t\t" << entry.second << "\n";
+        outFile << entry.first << " : " << entry.second << "\n";
     }
 
     cout << "Output written to output.txt\n";
