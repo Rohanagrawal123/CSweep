@@ -82,7 +82,13 @@ int main() {
         if (currentLine.find("for") != string::npos || currentLine.find("while") != string::npos) {
             // Handle loop-specific logic
         if (regex_search(currentLine, match, pointerAssignRegex)) {
-            
+             string varName = match[1];
+                if (lastOccurrence.find(varName) == lastOccurrence.end()) {
+                    dmaVars.push_back(varName);
+                }
+                lastOccurrence[varName] = i + 1;
+            }
+        } else if (regex_search(currentLine, match, pointerAssignRegex)) {
             string varName = match[1];
             if (lastOccurrence.find(varName) == lastOccurrence.end()) {
                 dmaVars.push_back(varName);
