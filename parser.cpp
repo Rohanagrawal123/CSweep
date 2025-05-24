@@ -133,7 +133,7 @@ int main() {
             isFreed[varName] = true; // Mark as freed
         }
     }
-    // Add this regex for function-return assignments
+    // function-return assignments
     regex funcAssignRegex(R"((int|float|double|char)\s*\*+\s*([a-zA-Z_]\w*)\s*=\s*([a-zA-Z_]\w*)\s*\([^;]*\))");
 
     unordered_map<string, int> funcInitLine;
@@ -149,6 +149,17 @@ int main() {
             funcVarUsed[varName] = false;
         }
     }
+    // Track usage of function-initialized pointers
+    for (int i = 0; i < lines.size(); ++i) {
+        for (auto& entry : funcInitLine) {
+            string varName = entry.first;
+            regex usageRegex("\\b" + varName + "\\b");
+            if (regex_search(lines[i], usageRegex)) {
+                funcVarUsed[varName] = true;
+            }
+        }
+    }
+    
 
     cout << "Output written to output.txt\n";
     return 0;
