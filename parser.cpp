@@ -133,6 +133,22 @@ int main() {
             isFreed[varName] = true; // Mark as freed
         }
     }
+    // Add this regex for function-return assignments
+    regex funcAssignRegex(R"((int|float|double|char)\s*\*+\s*([a-zA-Z_]\w*)\s*=\s*([a-zA-Z_]\w*)\s*\([^;]*\))");
+
+    unordered_map<string, int> funcInitLine;
+    unordered_map<string, bool> funcVarUsed;
+
+    // Detect function-initialized pointers
+    for (int i = 0; i < lines.size(); ++i) {
+        smatch match;
+        string currentLine = trim(lines[i]);
+        if (regex_search(currentLine, match, funcAssignRegex)) {
+            string varName = match[2];
+            funcInitLine[varName] = i + 1;
+            funcVarUsed[varName] = false;
+        }
+    }
 
     cout << "Output written to output.txt\n";
     return 0;
